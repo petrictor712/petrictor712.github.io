@@ -1,32 +1,32 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://westwind.github.io/project</id>
+    <id>https://petrictor712.github.io</id>
     <title>Chen&#39;s page</title>
     <subtitle></subtitle>
-    <icon>https://westwind.github.io/project/images/favicon.ico</icon>
-    <link href="https://westwind.github.io/project" />
+    <icon>https://petrictor712.github.io/images/favicon.ico</icon>
+    <link href="https://petrictor712.github.io" />
     <author>
       <name>Chen Zhuo</name>
     </author>
     <updated>2024-05-10T02:07:40.000Z</updated>
     <entry>
-        <id>https://westwind.github.io/project/2024/05/10/my-test-draft/</id>
+        <id>https://petrictor712.github.io/2024/05/10/my-test-draft/</id>
         <title>my-test-draft</title>
-        <link rel="alternate" href="https://westwind.github.io/project/2024/05/10/my-test-draft/"/>
+        <link rel="alternate" href="https://petrictor712.github.io/2024/05/10/my-test-draft/"/>
         <content type="html"></content>
         <updated>2024-05-10T02:07:40.000Z</updated>
     </entry>
     <entry>
-        <id>https://westwind.github.io/project/2024/05/10/mt-tset-post/</id>
+        <id>https://petrictor712.github.io/2024/05/10/mt-tset-post/</id>
         <title>mt-tset-post</title>
-        <link rel="alternate" href="https://westwind.github.io/project/2024/05/10/mt-tset-post/"/>
+        <link rel="alternate" href="https://petrictor712.github.io/2024/05/10/mt-tset-post/"/>
         <content type="html"></content>
         <updated>2024-05-10T02:06:08.000Z</updated>
     </entry>
     <entry>
-        <id>https://westwind.github.io/project/2024/05/10/hello-world/</id>
+        <id>https://petrictor712.github.io/2024/05/10/hello-world/</id>
         <title>Hello World</title>
-        <link rel="alternate" href="https://westwind.github.io/project/2024/05/10/hello-world/"/>
+        <link rel="alternate" href="https://petrictor712.github.io/2024/05/10/hello-world/"/>
         <content type="html">&lt;p&gt;Welcome to &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9oZXhvLmlvLw==&#34;&gt;Hexo&lt;/span&gt;! This is your very first post. Check &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9oZXhvLmlvL2RvY3Mv&#34;&gt;documentation&lt;/span&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9oZXhvLmlvL2RvY3MvdHJvdWJsZXNob290aW5nLmh0bWw=&#34;&gt;troubleshooting&lt;/span&gt; or you can ask me on &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2hleG9qcy9oZXhvL2lzc3Vlcw==&#34;&gt;GitHub&lt;/span&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;span id=&#34;more&#34;&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;h2 id=&#34;quick-start&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#quick-start&#34;&gt;#&lt;/a&gt; Quick Start&lt;/h2&gt;
