@@ -2,29 +2,29 @@
     "version": "https://jsonfeed.org/version/1",
     "title": "Chen's page",
     "subtitle": "",
-    "icon": "https://westwind.github.io/images/favicon.ico",
+    "icon": "https://westwind.github.io/project/images/favicon.ico",
     "description": "",
-    "home_page_url": "https://westwind.github.io",
+    "home_page_url": "https://westwind.github.io/project",
     "items": [
         {
-            "id": "https://westwind.github.io/2024/05/10/my-test-draft/",
-            "url": "https://westwind.github.io/2024/05/10/my-test-draft/",
+            "id": "https://westwind.github.io/project/2024/05/10/my-test-draft/",
+            "url": "https://westwind.github.io/project/2024/05/10/my-test-draft/",
             "title": "my-test-draft",
             "date_published": "2024-05-10T02:07:40.000Z",
             "content_html": "",
             "tags": []
         },
         {
-            "id": "https://westwind.github.io/2024/05/10/mt-tset-post/",
-            "url": "https://westwind.github.io/2024/05/10/mt-tset-post/",
+            "id": "https://westwind.github.io/project/2024/05/10/mt-tset-post/",
+            "url": "https://westwind.github.io/project/2024/05/10/mt-tset-post/",
             "title": "mt-tset-post",
             "date_published": "2024-05-10T02:06:08.000Z",
             "content_html": "",
             "tags": []
         },
         {
-            "id": "https://westwind.github.io/2024/05/10/hello-world/",
-            "url": "https://westwind.github.io/2024/05/10/hello-world/",
+            "id": "https://westwind.github.io/project/2024/05/10/hello-world/",
+            "url": "https://westwind.github.io/project/2024/05/10/hello-world/",
             "title": "Hello World",
             "date_published": "2024-05-10T01:54:31.136Z",
             "content_html": "<p>Welcome to <span class=\"exturl\" data-url=\"aHR0cHM6Ly9oZXhvLmlvLw==\">Hexo</span>! This is your very first post. Check <span class=\"exturl\" data-url=\"aHR0cHM6Ly9oZXhvLmlvL2RvY3Mv\">documentation</span> for more info. If you get any problems when using Hexo, you can find the answer in <span class=\"exturl\" data-url=\"aHR0cHM6Ly9oZXhvLmlvL2RvY3MvdHJvdWJsZXNob290aW5nLmh0bWw=\">troubleshooting</span> or you can ask me on <span class=\"exturl\" data-url=\"aHR0cHM6Ly9naXRodWIuY29tL2hleG9qcy9oZXhvL2lzc3Vlcw==\">GitHub</span>.</p>\n<p><span id=\"more\"></span></p>\n<h2 id=\"quick-start\"><a class=\"anchor\" href=\"#quick-start\">#</a> Quick Start</h2>\n<h3 id=\"create-a-new-post\"><a class=\"anchor\" href=\"#create-a-new-post\">#</a> Create a new post</h3>\n<p><figure class=\"highlight bash\"><table><tr><td class=\"gutter\"><pre><span class=\"line\">1</span><br></pre></td><td class=\"code\"><pre><span class=\"line\">$ hexo new <span class=\"string\">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></p>\n<p>More info: <span class=\"exturl\" data-url=\"aHR0cHM6Ly9oZXhvLmlvL2RvY3Mvd3JpdGluZy5odG1s\">Writing</span></p>\n<h3 id=\"run-server\"><a class=\"anchor\" href=\"#run-server\">#</a> Run server</h3>\n<p><figure class=\"highlight bash\"><table><tr><td class=\"gutter\"><pre><span class=\"line\">1</span><br></pre></td><td class=\"code\"><pre><span class=\"line\">$ hexo server</span><br></pre></td></tr></table></figure></p>\n<p>More info: <span class=\"exturl\" data-url=\"aHR0cHM6Ly9oZXhvLmlvL2RvY3Mvc2VydmVyLmh0bWw=\">Server</span></p>\n<h3 id=\"generate-static-files\"><a class=\"anchor\" href=\"#generate-static-files\">#</a> Generate static files</h3>\n<p><figure class=\"highlight bash\"><table><tr><td class=\"gutter\"><pre><span class=\"line\">1</span><br></pre></td><td class=\"code\"><pre><span class=\"line\">$ hexo generate</span><br></pre></td></tr></table></figure></p>\n<p>More info: <span class=\"exturl\" data-url=\"aHR0cHM6Ly9oZXhvLmlvL2RvY3MvZ2VuZXJhdGluZy5odG1s\">Generating</span></p>\n<h3 id=\"deploy-to-remote-sites\"><a class=\"anchor\" href=\"#deploy-to-remote-sites\">#</a> Deploy to remote sites</h3>\n<p><figure class=\"highlight bash\"><table><tr><td class=\"gutter\"><pre><span class=\"line\">1</span><br></pre></td><td class=\"code\"><pre><span class=\"line\">$ hexo deploy</span><br></pre></td></tr></table></figure></p>\n<p>More info: <span class=\"exturl\" data-url=\"aHR0cHM6Ly9oZXhvLmlvL2RvY3Mvb25lLWNvbW1hbmQtZGVwbG95bWVudC5odG1s\">Deployment</span></p>\n",
