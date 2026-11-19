@@ -114,3 +114,11 @@ form { display: grid; gap: 1rem; }
   .search { width: 100%; }
   .post-grid { grid-template-columns: 1fr; }
 }
+
+.article-picker { margin-bottom: 1rem; }
+select { width: 100%; min-height: 42px; color: var(--ink); font: inherit; border: 1px solid #c9cdd4; border-radius: 8px; padding: .56rem .72rem; background: var(--surface); }
+.photo-tools { display: grid; gap: .65rem; min-width: 0; margin: 0; padding: .75rem 1rem; border: 1px solid var(--line); border-radius: 8px; }
+.photo-tools legend { font-size: .94rem; font-weight: 700; }
+.photo-tools p { margin: 0; }
+.prose figure { margin: 1.4rem 0; }
+.prose figure img { width: auto; height: auto; max-height: 75vh; object-fit: contain; border-radius: 8px; }

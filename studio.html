@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex">
   <title>博主管理 · Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css">
-  <script defer src="/journal.js"></script>
+  <link rel="stylesheet" href="/journal.css?v=photos-1">
+  <script defer src="/journal.js?v=photos-1"></script>
 </head>
 <body data-page="studio">
   <header class="bar"><div class="shell bar-inner">
@@ -23,11 +23,18 @@
     <p id="studio-status" class="notice" role="status">正在读取已发布内容…</p>
     <div class="studio-grid">
       <section class="panel" aria-labelledby="write-title">
-        <h2 id="write-title">写文章</h2>
+        <h2 id="write-title">文章编辑器</h2>
+        <label class="article-picker">选择要编辑的文章<select id="edit-post" disabled><option value="">＋ 写新文章</option></select></label>
         <form id="post-form">
           <label>文章标题<input name="title" maxlength="100" placeholder="输入标题" required></label>
           <label>摘要 <span class="muted">选填</span><input name="summary" maxlength="180" placeholder="显示在文章列表里"></label>
           <label>正文 <span class="muted">支持基础 Markdown</span><textarea name="body" rows="12" maxlength="40000" placeholder="例如：## 小标题" required></textarea></label>
+          <fieldset class="photo-tools">
+            <legend>插入正文照片</legend>
+            <label>照片说明 <span class="muted">选填，供屏幕阅读器和图像加载失败时使用</span><input id="image-alt" maxlength="100" placeholder="例如：海边的日落"></label>
+            <label>选择图片<input id="post-photo" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <p class="muted">图片会压缩并插入上次光标所在位置。每篇最多 8 张。</p>
+          </fieldset>
           <div class="actions"><button id="preview-post" type="button" class="button">预览</button><button class="button primary" type="submit" disabled>加入待发布</button></div>
         </form>
         <section id="post-preview" class="preview prose" aria-label="文章预览" hidden></section>
@@ -49,6 +56,9 @@
           <div id="publish-steps" hidden>
             <ol><li>打开 GitHub 编辑页并聚焦代码编辑区。</li><li>全选原有内容并粘贴复制的内容。</li><li>点击 <strong>Commit changes</strong> 并提交到 <code>master</code>，部署完成后即可看到更新。</li></ol>
             <a class="button" href="https://github.com/petrictor712/petrictor712.github.io/edit/master/blog-content.json" target="_blank" rel="noopener">打开 GitHub 编辑页 ↗</a>
+            <button id="download-content" class="button" type="button">下载发布文件</button>
+            <p class="muted">文件较大时，可以先下载，再到仓库上传同名文件并提交。</p>
+            <a id="upload-content" class="text-link" href="https://github.com/petrictor712/petrictor712.github.io/upload/master" target="_blank" rel="noopener">打开 GitHub 上传页</a>
             <a class="text-link" href="https://github.com/petrictor712/petrictor712.github.io/actions" target="_blank" rel="noopener">查看部署状态</a>
             <label id="manual-copy" hidden>手动复制发布内容<textarea id="publish-output" rows="4" readonly></textarea></label>
           </div>

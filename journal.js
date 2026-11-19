@@ -4,13 +4,16 @@
   const byId = (id) => document.getElementById(id);
   const contentUrl = '/blog-content.json';
   const draftKey = 'chen-journal-draft-v1';
+  const maxPhotos = 8;
+  const maxPhotoLength = 480000;
+  const photoIdPattern = /^[a-f0-9]{12}$/;
   const avatarPattern = /^data:image\/(?:webp|jpeg|png);base64,[a-z0-9+/=]+$/i;
   const slugPattern = /^[a-z0-9][a-z0-9-]{0,79}$/;
   const legacy = [
-    { title: 'my-test-draft', url: '/2024/05/10/my-test-draft/', cover: '/images/blog-draft.webp' },
-    { title: 'mt-tset-post', url: '/2024/05/10/mt-tset-post/', cover: '/images/blog-test.webp' },
-    { title: 'Hello World', url: '/2024/05/10/hello-world/', cover: '/images/blog-hello.webp', summary: 'Hexo 入门示例，包含写作、预览和部署命令。' },
-  ].map((post) => ({ ...post, date: '2024-05-10' }));
+    { title: 'my-test-draft', slug: 'legacy-my-test-draft', cover: '/images/blog-draft.webp', summary: '', body: '' },
+    { title: 'mt-tset-post', slug: 'legacy-mt-tset-post', cover: '/images/blog-test.webp', summary: '', body: '' },
+    { title: 'Hello World', slug: 'legacy-hello-world', cover: '/images/blog-hello.webp', summary: 'Hexo 入门示例，包含写作、预览和部署命令。', body: 'Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).\n\n## Quick Start\n\n### Create a new post\n\n```bash\n$ hexo new "My New Post"\n```\n\nMore info: [Writing](https://hexo.io/docs/writing.html)\n\n### Run server\n\n```bash\n$ hexo server\n```\n\nMore info: [Server](https://hexo.io/docs/server.html)\n\n### Generate static files\n\n```bash\n$ hexo generate\n```\n\nMore info: [Generating](https://hexo.io/docs/generating.html)\n\n### Deploy to remote sites\n\n```bash\n$ hexo deploy\n```\n\nMore info: [Deployment](https://hexo.io/docs/one-command-deployment.html)' },
+  ].map((post) => ({ ...post, date: '2024-05-10', url: '/2024/05/10/' + post.slug.slice(7) + '/' }));
   const dateFormat = new Intl.DateTimeFormat('zh-CN', {
     dateStyle: 'long', timeZone: 'Asia/Shanghai',
   });
@@ -24,6 +27,22 @@
 
   function validAvatar(src) {
     return typeof src === 'string' && src.length < 180000 && avatarPattern.test(src);
+  }
+
+  function validPhotos(photos) {
+    return photos === undefined || (Array.isArray(photos) && photos.length <= maxPhotos
+      && new Set(photos.map((photo) => photo?.id)).size === photos.length
+      && photos.every((photo) => photo && typeof photo.id === 'string' && photoIdPattern.test(photo.id)
+        && typeof photo.src === 'string' && photo.src.length <= maxPhotoLength && avatarPattern.test(photo.src)));
+  }
+
+  function allPosts(data) {
+    const items = new Map(data.posts.map((post) => [post.slug, post]));
+    for (const post of legacy) {
+      const override = items.get(post.slug);
+      items.set(post.slug, override ? { ...override, url: post.url, cover: post.cover } : post);
+    }
+    return [...items.values()].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
   }
 
   function displayAvatar(src) {
@@ -44,7 +63,7 @@
       if (!post || typeof post.slug !== 'string' || !slugPattern.test(post.slug) || ids.has(post.slug)
           || typeof post.title !== 'string' || typeof post.summary !== 'string'
           || typeof post.body !== 'string' || typeof post.date !== 'string'
-          || !Number.isFinite(Date.parse(post.date))) {
+          || !Number.isFinite(Date.parse(post.date)) || !validPhotos(post.photos)) {
         throw new Error('有文章的格式有误。');
       }
       ids.add(post.slug);
@@ -70,8 +89,9 @@
     parent.append(input.slice(end));
   }
 
-  function renderMarkdown(container, markdown) {
+  function renderMarkdown(container, markdown, photos = []) {
     container.replaceChildren();
+    const photosById = new Map(photos.map((photo) => [photo.id, photo.src]));
     let paragraph = [];
     let list = null;
     let code = null;
@@ -101,6 +121,20 @@
       }
       if (code) {
         code.push(line);
+        continue;
+      }
+      const photo = /^!\[([^\]\n]*)\]\(photo:([a-f0-9]{12})\)$/.exec(line.trim());
+      if (photo && photosById.has(photo[2])) {
+        flushParagraph();
+        list = null;
+        const figure = element('figure');
+        const image = element('img');
+        image.src = photosById.get(photo[2]);
+        image.alt = photo[1];
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        figure.append(image);
+        container.append(figure);
         continue;
       }
       const heading = /^(#{1,5})\s+(.+)$/.exec(line);
@@ -178,7 +212,7 @@
     try {
       const data = await loadContent();
       displayAvatar(data.avatar);
-      posts = [...data.posts, ...legacy].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+      posts = allPosts(data);
     } catch {
       byId('feed-status').textContent = '暂时无法刷新新文章，已显示归档中的文章。';
     }
@@ -201,7 +235,7 @@
       byId('article-summary').textContent = post.summary;
       byId('article-summary').hidden = !post.summary;
       displayAvatar(data.avatar);
-      renderMarkdown(byId('article-body'), post.body);
+      renderMarkdown(byId('article-body'), post.body, post.photos);
       byId('article').hidden = false;
       status.hidden = true;
     } catch {
@@ -209,21 +243,30 @@
     }
   }
 
-  async function prepareAvatar(file) {
+  async function prepareImage(file, crop = false) {
     if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       throw new Error('请选择 JPG、PNG 或 WebP 图片。');
     }
     if (file.size > 12 * 1024 * 1024) throw new Error('请选择小于 12 MB 的图片。');
     const image = await createImageBitmap(file);
     try {
-      const size = Math.min(image.width, image.height);
       const canvas = element('canvas');
-      canvas.width = canvas.height = Math.min(size, 384);
       const context = canvas.getContext('2d');
-      context.drawImage(image, (image.width - size) / 2, (image.height - size) / 2, size, size, 0, 0, canvas.width, canvas.height);
-      const avatar = canvas.toDataURL('image/webp', .8);
-      if (!validAvatar(avatar)) throw new Error('无法将图片压缩到发布大小，请换一张较小的图片。');
-      return avatar;
+      const cropSize = Math.min(image.width, image.height);
+      const width = crop ? cropSize : image.width;
+      const height = crop ? cropSize : image.height;
+      const x = (image.width - width) / 2;
+      const y = (image.height - height) / 2;
+      const limit = crop ? 384 : 1280;
+      for (const scale of [1, .8, .6, .45]) {
+        const ratio = Math.min(1, (limit * scale) / Math.max(width, height));
+        canvas.width = Math.max(1, Math.round(width * ratio));
+        canvas.height = Math.max(1, Math.round(height * ratio));
+        context.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+        const output = canvas.toDataURL('image/webp', .78);
+        if (crop ? validAvatar(output) : output.length <= maxPhotoLength && avatarPattern.test(output)) return output;
+      }
+      throw new Error('图片压缩后仍然过大，请换一张较小的图片。');
     } finally {
       image.close();
     }
@@ -238,8 +281,17 @@
     const avatarInput = avatarForm.elements.avatar;
     const avatarSubmit = avatarForm.querySelector('[type="submit"]');
     const postSubmit = postForm.querySelector('[type="submit"]');
+    const editor = byId('edit-post');
+    const photoInput = byId('post-photo');
+    const textArea = postForm.elements.body;
     const postFields = ['title', 'summary', 'body'];
-    const posts = [];
+    const staged = new Map();
+    const drafts = new Map();
+    let activeSlug = '';
+    let photos = [];
+    let editRevision = 0;
+    let preparing = false;
+    let insertingPhoto = false;
     let base;
     let avatar;
     let candidate;
@@ -257,12 +309,12 @@
 
     const update = () => {
       pending.replaceChildren();
-      for (const post of posts) {
-        const row = element('li', post.title + ' ');
+      for (const { post, editing } of staged.values()) {
+        const row = element('li', (editing ? '更新：' : '新文章：') + post.title + ' ');
         const remove = element('button', '撤销', 'button small');
         remove.type = 'button';
         remove.addEventListener('click', () => {
-          posts.splice(posts.indexOf(post), 1);
+          staged.delete(post.slug);
           invalidateOutput();
           update();
         });
@@ -282,27 +334,94 @@
         row.append(remove);
         pending.append(row);
       }
-      prepare.disabled = !base || (!posts.length && !avatar);
-      postSubmit.disabled = !base;
+      prepare.disabled = preparing || !base || (!staged.size && !avatar);
+      postSubmit.disabled = !base || insertingPhoto;
+      postSubmit.textContent = activeSlug ? '保存修改到待发布' : '加入待发布';
+      editor.disabled = !base;
+      textArea.required = !activeSlug;
       avatarSubmit.disabled = !base || !candidate;
     };
 
     const readPost = () => Object.fromEntries(postFields.map((name) => [name, postForm.elements[name].value.trim()]));
-    try {
-      const draft = JSON.parse(localStorage.getItem(draftKey) || '{}');
-      for (const name of postFields) if (typeof draft[name] === 'string') postForm.elements[name].value = draft[name];
-    } catch {
-      // Editing remains available when the browser blocks storage.
-    }
-    postForm.addEventListener('input', () => {
-      try { localStorage.setItem(draftKey, JSON.stringify(readPost())); } catch { /* Storage is optional. */ }
+    const draftStorageKey = () => activeSlug ? draftKey + ':' + activeSlug : draftKey;
+    const selectedPost = () => allPosts(base).find((post) => post.slug === activeSlug);
+    const saveDraft = () => {
+      const selected = base && selectedPost();
+      const draft = { ...readPost(), photos, sourceVersion: selected?.updatedAt || selected?.date };
+      drafts.set(activeSlug, draft);
+      try { localStorage.setItem(draftStorageKey(), JSON.stringify(draft)); } catch { /* Keep the current session copy. */ }
+    };
+    const openDraft = () => {
+      ++editRevision;
+      const selected = selectedPost();
+      let draft = drafts.get(activeSlug);
+      if (!draft) {
+        try { draft = JSON.parse(localStorage.getItem(draftStorageKey()) || 'null'); } catch { /* Storage is optional. */ }
+      }
+      if (activeSlug && draft?.sourceVersion !== (selected?.updatedAt || selected?.date)) draft = null;
+      const value = draft || staged.get(activeSlug)?.post || selected || {};
+      for (const name of postFields) postForm.elements[name].value = typeof value[name] === 'string' ? value[name] : '';
+      photos = validPhotos(value.photos) ? value.photos || [] : [];
+      byId('post-preview').hidden = true;
+      photoInput.value = '';
+      byId('image-alt').value = '';
+      update();
+    };
+
+    editor.addEventListener('change', () => {
+      if (!base) return;
+      saveDraft();
+      activeSlug = editor.value;
+      openDraft();
+    });
+    postForm.addEventListener('input', (event) => {
+      if (postFields.includes(event.target.name)) saveDraft();
+    });
+
+    const usedPhotos = (body) => photos.filter(({ id }) => body.includes('(photo:' + id + ')'));
+
+    photoInput.addEventListener('change', async () => {
+      const file = photoInput.files[0];
+      if (!file) return;
+      if (usedPhotos(textArea.value).length >= maxPhotos) {
+        photoInput.value = '';
+        report('这篇文章已达到 8 张照片。删除正文中的图片标记后可以添加。', true);
+        return;
+      }
+      const revision = editRevision;
+      const alt = byId('image-alt').value.trim().replace(/[\[\]\r\n]/g, ' ');
+      photoInput.disabled = true;
+      insertingPhoto = true;
+      update();
+      try {
+        const src = await prepareImage(file);
+        if (editRevision !== revision) return;
+        const id = crypto.randomUUID().replace(/-/g, '').slice(0, 12);
+        const insertion = '\n\n![' + alt + '](photo:' + id + ')\n\n';
+        const position = textArea.selectionEnd;
+        if (textArea.value.length + insertion.length > textArea.maxLength) throw new Error('正文已达到长度上限，请先缩短正文。');
+        photos = [...usedPhotos(textArea.value), { id, src }];
+        textArea.setRangeText(insertion, position, position, 'end');
+        byId('image-alt').value = '';
+        byId('post-preview').hidden = true;
+        saveDraft();
+        textArea.focus();
+        report('照片已插入正文。点击「预览」可以查看效果。');
+      } catch (error) {
+        if (editRevision === revision) report(error.message || '无法读取图片。', true);
+      } finally {
+        photoInput.disabled = false;
+        photoInput.value = '';
+        insertingPhoto = false;
+        update();
+      }
     });
 
     byId('preview-post').addEventListener('click', () => {
       const post = readPost();
       const preview = byId('post-preview');
       const body = element('div');
-      renderMarkdown(body, post.body);
+      renderMarkdown(body, post.body, photos);
       preview.replaceChildren(element('h3', post.title || '未命名文章'));
       if (post.summary) preview.append(element('p', post.summary, 'muted'));
       preview.append(body);
@@ -311,21 +430,33 @@
 
     postForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      if (!base) return;
+      if (!base || insertingPhoto) return;
       const post = readPost();
-      if (!post.title || !post.body) {
+      if (!post.title || (!activeSlug && !post.body)) {
         report('请填写文章标题和正文。', true);
         return;
       }
-      if ([...base.posts, ...posts].some((item) => item.title === post.title && item.body === post.body)) {
+      const original = base.posts.find((item) => item.slug === activeSlug);
+      const source = original || legacy.find((item) => item.slug === activeSlug);
+      if (!activeSlug && [...base.posts, ...[...staged.values()].map((entry) => entry.post)]
+          .some((item) => item.title === post.title && item.body === post.body)) {
         report('这篇文章已经发布或在待发布列表中。', true);
         return;
       }
       const prefix = post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 36) || 'post';
-      posts.push({ ...post, slug: prefix + '-' + crypto.randomUUID().slice(0, 12), date: new Date().toISOString() });
+      const slug = source?.slug || prefix + '-' + crypto.randomUUID().slice(0, 12);
+      const images = usedPhotos(post.body);
+      if ([...post.body.matchAll(/!\[[^\]\n]*\]\(photo:([a-f0-9]{12})\)/g)]
+            .some((match) => !images.some(({ id }) => id === match[1]))) {
+        report('正文里有一张缺失的照片。请重新插入该图，或删除对应的图片标记。', true);
+        return;
+      }
+      const timestamp = new Date().toISOString();
+      const item = { ...original, ...post, slug, date: source?.date || timestamp, updatedAt: timestamp, photos: images };
+      staged.set(slug, { post: item, original, editing: Boolean(source) });
       invalidateOutput();
       update();
-      report('文章已加入待发布。可以继续写作，或复制发布内容。');
+      report(source ? '文章修改已加入待发布，发布后会替换原文。' : '新文章已加入待发布。');
     });
 
     avatarInput.addEventListener('change', async () => {
@@ -333,7 +464,7 @@
       candidate = undefined;
       update();
       try {
-        const image = await prepareAvatar(avatarInput.files[0]);
+        const image = await prepareImage(avatarInput.files[0], true);
         if (token !== selection) return;
         candidate = image;
         displayAvatar(image);
@@ -356,19 +487,34 @@
     });
 
     prepare.addEventListener('click', async () => {
-      prepare.disabled = true;
+      preparing = true;
+      update();
       invalidateOutput();
       try {
         const latest = await loadContent();
         if (avatar && latest.avatar !== base.avatar && latest.avatar !== avatar) {
           throw new Error('线上头像已被更新。请刷新管理页，确认后重新选择头像。');
         }
-        const newPosts = posts.filter((post) => !latest.posts.some((item) => item.slug === post.slug || (item.title === post.title && item.body === post.body)));
-        const data = { ...latest, avatar: avatar || latest.avatar, posts: [...latest.posts, ...newPosts] };
+        const merged = new Map(latest.posts.map((post) => [post.slug, post]));
+        for (const { post, original, editing } of staged.values()) {
+          const current = merged.get(post.slug);
+          if (editing && JSON.stringify(current) !== JSON.stringify(original)
+              && JSON.stringify(current) !== JSON.stringify(post)) {
+            throw new Error('「' + post.title + '」已被其他提交修改。请刷新并重新编辑。');
+          }
+          if (editing || ![...merged.values()].some((item) => item.slug === post.slug
+              || (item.title === post.title && item.body === post.body))) merged.set(post.slug, post);
+        }
+        const data = { ...latest, avatar: avatar || latest.avatar, posts: [...merged.values()] };
         const file = JSON.stringify(data, null, 2) + '\n';
+        if (new Blob([file]).size > 20 * 1024 * 1024) throw new Error('发布文件超过 20 MB。请减少正文图片后重试。');
         byId('publish-output').value = file;
         byId('manual-copy').hidden = true;
         byId('publish-steps').hidden = false;
+        if (new Blob([file]).size > 750000) {
+          report('发布文件较大。请点击「下载发布文件」，再打开 GitHub 上传页提交。');
+          return;
+        }
         try {
           await navigator.clipboard.writeText(file);
           report('发布内容已复制。接下来打开 GitHub 编辑页，粘贴并提交。');
@@ -380,13 +526,32 @@
         }
       } catch (error) {
         report(error.message || '暂时无法生成发布内容，请重试。', true);
+      } finally {
+        preparing = false;
+        update();
       }
-      update();
+    });
+
+    byId('download-content').addEventListener('click', () => {
+      const file = byId('publish-output').value;
+      if (!file) return;
+      const url = URL.createObjectURL(new Blob([file], { type: 'application/json' }));
+      const link = element('a');
+      link.href = url;
+      link.download = 'blog-content.json';
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
     });
 
     loadContent().then((data) => {
       base = data;
       displayAvatar(candidate || data.avatar);
+      for (const post of allPosts(data)) {
+        const option = element('option', post.title);
+        option.value = post.slug;
+        editor.append(option);
+      }
+      openDraft();
       report('当前内容已就绪。草稿保存在此浏览器，提交到 GitHub 后才会公开。');
       update();
     }).catch(() => report('暂时无法读取已发布内容。请刷新后重试，避免覆盖线上文章。', true));
