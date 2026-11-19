@@ -374,14 +374,58 @@ button.tag:hover, a.tag:hover { border-color: var(--accent); }
   .add-post, .hero-link { transition: background-color 160ms ease; }
 }
 
-/* Decorative star field belongs only to the homepage masthead. */
+/* Decorative star field behind the complete homepage. */
+body[data-page=home] {
+  isolation: isolate;
+  min-height: 100vh;
+  background: #080e22;
+  color: #eef4ff;
+}
 .star-sky {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, #000 4%, #000e 64%, transparent 100%);
+  background:
+    radial-gradient(ellipse at 81% 21%, #2b4e8a80, transparent 47%),
+    radial-gradient(ellipse at 29% 63%, #51337169, transparent 53%),
+    radial-gradient(ellipse at 92% 97%, #1d4a6260, transparent 51%),
+    linear-gradient(145deg, #0d1732, #090f25 56%, #101c33);
+}
+body[data-page=home] .bar,
+body[data-page=home] .footer { border-color: #9bb7ec38; }
+body[data-page=home] .bar nav > a:not(.button):hover,
+body[data-page=home] .footer a:hover { color: #b9d6ff; }
+body[data-page=home] .brand { color: #f2f6ff; }
+body[data-page=home] .footer,
+body[data-page=home] .section-head p,
+body[data-page=home] #post-grid > .muted,
+body[data-page=home] #feed-status { color: #c2d1ed; }
+body[data-page=home] .hero {
+  min-height: 320px;
+  background: transparent;
+  border: 1px solid #9bb7ec38;
+}
+body[data-page=home] .hero::before {
+  background: linear-gradient(96deg, #0b163536, transparent);
+}
+body[data-page=home] .journal-clock { background: #101b37bb; }
+body[data-page=home] .card {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: #a0b8e26b;
+}
+@supports (color: light-dark(#000, #fff)) {
+  body[data-page=home] .card { background: light-dark(#edf3fd, #151f36); }
+}
+body[data-page=home] .add-post {
+  border-color: #7391c9;
+  background: #294e8b;
+}
+body[data-page=home] .add-post:hover { background: #3d63a6; }
+@media (max-width: 760px) {
+  body[data-page=home] .hero { min-height: 290px; }
 }
 .star-sky::before, .star-sky::after {
   position: absolute;
