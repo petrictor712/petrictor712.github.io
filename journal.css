@@ -509,3 +509,26 @@ body[data-page=home] .add-post:hover { background: #3d63a6; }
     10%, 100% { transform: translate3d(-200px, 102px, 0) rotate(-27deg); opacity: 0; }
   }
 }
+
+/* The masthead illustration sits above the page-wide star field. */
+.home-illustration {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: -1;
+  width: 60%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% center;
+  mask-image: linear-gradient(to right, transparent, #000 28%);
+}
+@media (max-width: 760px) {
+  .home-illustration {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    order: 1;
+    width: 100%;
+    height: clamp(145px, 43vw, 240px);
+    mask-image: linear-gradient(to bottom, transparent, #000 26%);
+  }
+}
