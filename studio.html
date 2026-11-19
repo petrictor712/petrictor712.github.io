@@ -6,13 +6,13 @@
   <meta name="robots" content="noindex">
   <title>博主管理 · Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css?v=photos-1">
-  <script defer src="/journal.js?v=photos-1"></script>
+  <link rel="stylesheet" href="/journal.css?v=reading-1">
+  <script defer src="/journal.js?v=reading-1"></script>
 </head>
 <body data-page="studio">
   <header class="bar"><div class="shell bar-inner">
     <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">C</span> Chen’s Journal</a>
-    <nav aria-label="主导航"><a href="/">返回博客</a></nav>
+    <nav aria-label="主导航"><a href="/">返回博客</a><button type="button" class="theme-button" data-theme-toggle aria-label="深色模式" aria-pressed="false" title="切换深色模式" hidden><span aria-hidden="true">◐</span></button></nav>
   </div></header>
   <main class="shell studio">
     <div class="studio-heading">
@@ -28,6 +28,7 @@
         <form id="post-form">
           <label>文章标题<input name="title" maxlength="100" placeholder="输入标题" required></label>
           <label>摘要 <span class="muted">选填</span><input name="summary" maxlength="180" placeholder="显示在文章列表里"></label>
+          <label>标签 <span class="muted">选填，最多 6 个，用逗号隔开</span><input name="tags" maxlength="160" placeholder="例如：随笔，摄影"></label>
           <label>正文 <span class="muted">支持基础 Markdown</span><textarea name="body" rows="12" maxlength="40000" placeholder="例如：## 小标题" required></textarea></label>
           <fieldset class="photo-tools">
             <legend>插入正文照片</legend>

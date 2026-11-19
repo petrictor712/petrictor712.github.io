@@ -6,14 +6,14 @@
   <meta name="description" content="Chen 的个人博客与文章归档。">
   <title>Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css?v=photos-1">
-  <script defer src="/journal.js?v=photos-1"></script>
+  <link rel="stylesheet" href="/journal.css?v=reading-1">
+  <script defer src="/journal.js?v=reading-1"></script>
 </head>
 <body data-page="home">
   <a class="skip" href="#posts">跳到文章</a>
   <header class="bar"><div class="shell bar-inner">
     <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">C</span> Chen’s Journal</a>
-    <nav aria-label="主导航"><a href="#posts">文章</a><a href="/archives/">旧文归档</a><a class="button small" href="/studio.html">博主管理</a></nav>
+    <nav aria-label="主导航"><a href="#posts">文章</a><a href="/archives/">旧文归档</a><a class="button small" href="/studio.html">博主管理</a><button type="button" class="theme-button" data-theme-toggle aria-label="深色模式" aria-pressed="false" title="切换深色模式" hidden><span aria-hidden="true">◐</span></button></nav>
   </div></header>
   <main>
     <section class="hero shell" aria-labelledby="page-title">
@@ -29,8 +29,12 @@
     <section id="posts" class="shell post-section" aria-labelledby="posts-title">
       <div class="section-head">
         <div><h2 id="posts-title">文章</h2><p id="result-count" aria-live="polite">3 篇文章</p></div>
-        <label class="search"><span>搜索文章</span><input id="search" type="search" placeholder="输入标题或关键词" autocomplete="off"></label>
+        <div class="post-controls">
+          <label class="search"><span>搜索文章</span><input id="search" type="search" placeholder="输入标题、正文或标签" autocomplete="off"></label>
+          <label id="order-control" hidden><span>排序</span><select id="post-order"><option value="newest">最新优先</option><option value="oldest">最早优先</option></select></label>
+        </div>
       </div>
+      <div id="post-tags" class="tag-filter" role="group" aria-label="按标签筛选文章" hidden></div>
       <div id="post-grid" class="post-grid">
         <article class="card"><a href="/2024/05/10/my-test-draft/"><img src="/images/blog-draft.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>my-test-draft</h3><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>
         <article class="card"><a href="/2024/05/10/mt-tset-post/"><img src="/images/blog-test.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>mt-tset-post</h3><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>

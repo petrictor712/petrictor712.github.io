@@ -10,10 +10,10 @@
   const avatarPattern = /^data:image\/(?:webp|jpeg|png);base64,[a-z0-9+/=]+$/i;
   const slugPattern = /^[a-z0-9][a-z0-9-]{0,79}$/;
   const legacy = [
-    { title: 'my-test-draft', slug: 'legacy-my-test-draft', cover: '/images/blog-draft.webp', summary: '', body: '' },
-    { title: 'mt-tset-post', slug: 'legacy-mt-tset-post', cover: '/images/blog-test.webp', summary: '', body: '' },
-    { title: 'Hello World', slug: 'legacy-hello-world', cover: '/images/blog-hello.webp', summary: 'Hexo 入门示例，包含写作、预览和部署命令。', body: 'Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).\n\n## Quick Start\n\n### Create a new post\n\n```bash\n$ hexo new "My New Post"\n```\n\nMore info: [Writing](https://hexo.io/docs/writing.html)\n\n### Run server\n\n```bash\n$ hexo server\n```\n\nMore info: [Server](https://hexo.io/docs/server.html)\n\n### Generate static files\n\n```bash\n$ hexo generate\n```\n\nMore info: [Generating](https://hexo.io/docs/generating.html)\n\n### Deploy to remote sites\n\n```bash\n$ hexo deploy\n```\n\nMore info: [Deployment](https://hexo.io/docs/one-command-deployment.html)' },
-  ].map((post) => ({ ...post, date: '2024-05-10', url: '/2024/05/10/' + post.slug.slice(7) + '/' }));
+    { title: 'my-test-draft', slug: 'legacy-my-test-draft', date: '2024-05-10T02:07:40Z', cover: '/images/blog-draft.webp', summary: '', body: '' },
+    { title: 'mt-tset-post', slug: 'legacy-mt-tset-post', date: '2024-05-10T02:06:08Z', cover: '/images/blog-test.webp', summary: '', body: '' },
+    { title: 'Hello World', slug: 'legacy-hello-world', date: '2024-05-10T01:54:31Z', cover: '/images/blog-hello.webp', summary: 'Hexo 入门示例，包含写作、预览和部署命令。', body: 'Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).\n\n## Quick Start\n\n### Create a new post\n\n```bash\n$ hexo new "My New Post"\n```\n\nMore info: [Writing](https://hexo.io/docs/writing.html)\n\n### Run server\n\n```bash\n$ hexo server\n```\n\nMore info: [Server](https://hexo.io/docs/server.html)\n\n### Generate static files\n\n```bash\n$ hexo generate\n```\n\nMore info: [Generating](https://hexo.io/docs/generating.html)\n\n### Deploy to remote sites\n\n```bash\n$ hexo deploy\n```\n\nMore info: [Deployment](https://hexo.io/docs/one-command-deployment.html)' },
+  ].map((post) => ({ ...post, url: '/2024/05/10/' + post.slug.slice(7) + '/' }));
   const dateFormat = new Intl.DateTimeFormat('zh-CN', {
     dateStyle: 'long', timeZone: 'Asia/Shanghai',
   });
@@ -23,6 +23,43 @@
     if (text !== undefined) node.textContent = text;
     if (className) node.className = className;
     return node;
+  }
+
+  function initTheme() {
+    const toggle = document.querySelector('[data-theme-toggle]');
+    if (!toggle) return;
+    const preference = matchMedia('(prefers-color-scheme: dark)');
+    let saved;
+    try { saved = localStorage.getItem('chen-journal-theme'); } catch { /* Storage is optional. */ }
+    if (saved !== 'light' && saved !== 'dark') saved = null;
+    const apply = () => {
+      const dark = saved ? saved === 'dark' : preference.matches;
+      if (saved) document.documentElement.dataset.theme = saved;
+      toggle.setAttribute('aria-pressed', String(dark));
+      toggle.title = dark ? '切换浅色模式' : '切换深色模式';
+    };
+    toggle.addEventListener('click', () => {
+      saved = toggle.getAttribute('aria-pressed') === 'true' ? 'light' : 'dark';
+      try { localStorage.setItem('chen-journal-theme', saved); } catch { /* The current page still switches. */ }
+      apply();
+    });
+    preference.addEventListener('change', apply);
+    apply();
+    toggle.hidden = false;
+  }
+
+  function parseTags(input) {
+    const tags = new Map();
+    for (const value of input.split(/[,，、]/)) {
+      const tag = value.trim();
+      if (tag && !tags.has(tag.toLocaleLowerCase())) tags.set(tag.toLocaleLowerCase(), tag);
+    }
+    return [...tags.values()];
+  }
+
+  function validTags(tags) {
+    return tags === undefined || (Array.isArray(tags) && tags.length <= 6
+      && tags.every((tag) => typeof tag === 'string' && tag === tag.trim() && tag.length > 0 && tag.length <= 24));
   }
 
   function validAvatar(src) {
@@ -63,7 +100,7 @@
       if (!post || typeof post.slug !== 'string' || !slugPattern.test(post.slug) || ids.has(post.slug)
           || typeof post.title !== 'string' || typeof post.summary !== 'string'
           || typeof post.body !== 'string' || typeof post.date !== 'string'
-          || !Number.isFinite(Date.parse(post.date)) || !validPhotos(post.photos)) {
+          || !Number.isFinite(Date.parse(post.date)) || !validPhotos(post.photos) || !validTags(post.tags)) {
         throw new Error('有文章的格式有误。');
       }
       ids.add(post.slug);
@@ -170,6 +207,16 @@
     return time;
   }
 
+  function renderTags(container, tags = [], linkToFilter = false) {
+    container.replaceChildren();
+    for (const tag of tags) {
+      const item = element(linkToFilter ? 'a' : 'span', tag, 'tag');
+      if (linkToFilter) item.href = '/?tag=' + encodeURIComponent(tag) + '#posts';
+      container.append(item);
+    }
+    container.hidden = !tags.length;
+  }
+
   function renderCard(post) {
     const card = element('article', undefined, 'card');
     const link = element('a');
@@ -179,6 +226,11 @@
     arrow.setAttribute('aria-hidden', 'true');
     body.append(timeLabel(post.date), element('h3', post.title), arrow);
     if (post.summary) body.append(element('p', post.summary));
+    if (post.tags?.length) {
+      const tags = element('div', undefined, 'tag-list');
+      renderTags(tags, post.tags);
+      body.append(tags);
+    }
     if (post.cover) {
       const image = element('img');
       image.src = post.cover;
@@ -195,20 +247,30 @@
   async function initHome() {
     const grid = byId('post-grid');
     const search = byId('search');
+    const order = byId('post-order');
+    const filter = byId('post-tags');
     let posts = legacy;
+    let currentTag = new URLSearchParams(location.search).get('tag')?.toLocaleLowerCase() || '';
 
     const update = () => {
       const terms = search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
       const matches = posts.filter((post) => {
-        const text = [post.title, post.summary, post.body].join(' ').toLocaleLowerCase();
-        return terms.every((term) => text.includes(term));
+        const tags = (post.tags || []).map((tag) => tag.toLocaleLowerCase());
+        const text = [post.title, post.summary, post.body, ...tags].join(' ').toLocaleLowerCase();
+        return (!currentTag || tags.includes(currentTag)) && terms.every((term) => text.includes(term));
       });
+      if (order.value === 'oldest') matches.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
       byId('result-count').textContent = matches.length + ' 篇文章';
       grid.replaceChildren(...matches.map(renderCard));
       if (!matches.length) grid.append(element('p', '没有找到匹配的文章。', 'muted'));
+      for (const button of filter.querySelectorAll('button')) {
+        button.setAttribute('aria-pressed', String(button.dataset.tag === currentTag));
+      }
     };
 
     search.addEventListener('input', update);
+    order.addEventListener('change', update);
+    byId('order-control').hidden = false;
     try {
       const data = await loadContent();
       displayAvatar(data.avatar);
@@ -216,7 +278,95 @@
     } catch {
       byId('feed-status').textContent = '暂时无法刷新新文章，已显示归档中的文章。';
     }
+    const tags = new Map();
+    for (const post of posts) {
+      for (const tag of post.tags || []) tags.set(tag.toLocaleLowerCase(), tag);
+    }
+    if (currentTag && !tags.has(currentTag)) currentTag = '';
+    if (tags.size) {
+      filter.hidden = false;
+      for (const [key, label] of [['', '全部标签'], ...tags]) {
+        const button = element('button', label, 'tag');
+        button.type = 'button';
+        button.dataset.tag = key;
+        button.addEventListener('click', () => {
+          currentTag = key;
+          const url = new URL(location.href);
+          if (key) url.searchParams.set('tag', label);
+          else url.searchParams.delete('tag');
+          history.replaceState(null, '', url);
+          update();
+        });
+        filter.append(button);
+      }
+    }
     update();
+  }
+
+  function initReading(body) {
+    const progress = byId('reading-progress');
+    const toc = byId('article-toc');
+    const tocLinks = byId('toc-links');
+    const dialog = byId('photo-dialog');
+    const zoomedPhoto = byId('zoomed-photo');
+    const headings = [...body.querySelectorAll('h2,h3,h4,h5,h6')];
+    const ids = new Set();
+    for (const heading of headings) {
+      const stem = heading.textContent.trim().toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      let id = stem;
+      for (let duplicate = 2; ids.has(id) || document.getElementById(id); duplicate++) id = stem + '-' + duplicate;
+      heading.id = id;
+      ids.add(id);
+      const link = element('a', heading.textContent);
+      link.href = '#' + encodeURIComponent(id);
+      link.dataset.level = heading.tagName.slice(1);
+      tocLinks.append(link);
+    }
+    toc.hidden = !headings.length;
+    if (location.hash) {
+      try {
+        const anchor = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        if (anchor && body.contains(anchor)) anchor.scrollIntoView({ behavior: 'instant' });
+      } catch { /* Ignore a malformed fragment. */ }
+    }
+
+    let framePending = false;
+    const updateProgress = () => {
+      const rect = body.getBoundingClientRect();
+      const range = rect.height - window.innerHeight + Math.max(0, rect.top + window.scrollY);
+      progress.hidden = range <= 0;
+      progress.value = range > 0 ? Math.max(0, Math.min(100, 100 * window.scrollY / range)) : 0;
+      framePending = false;
+    };
+    const schedule = () => {
+      if (!framePending) {
+        framePending = true;
+        requestAnimationFrame(updateProgress);
+      }
+    };
+    window.addEventListener('scroll', schedule, { passive: true });
+    const resize = new ResizeObserver(schedule);
+    resize.observe(body);
+    window.addEventListener('resize', schedule);
+    schedule();
+
+    byId('close-photo').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', () => zoomedPhoto.removeAttribute('src'));
+    for (const photo of body.querySelectorAll('figure img')) {
+      const trigger = element('button', undefined, 'photo-zoom');
+      trigger.type = 'button';
+      trigger.setAttribute('aria-label', photo.alt ? '放大照片：' + photo.alt : '放大照片');
+      photo.replaceWith(trigger);
+      trigger.append(photo);
+      trigger.addEventListener('click', () => {
+        zoomedPhoto.src = photo.currentSrc || photo.src;
+        zoomedPhoto.alt = photo.alt;
+        dialog.showModal();
+      });
+    }
   }
 
   async function initArticle() {
@@ -235,9 +385,12 @@
       byId('article-summary').textContent = post.summary;
       byId('article-summary').hidden = !post.summary;
       displayAvatar(data.avatar);
-      renderMarkdown(byId('article-body'), post.body, post.photos);
+      const body = byId('article-body');
+      renderMarkdown(body, post.body, post.photos);
+      renderTags(byId('article-tags'), post.tags, true);
       byId('article').hidden = false;
       status.hidden = true;
+      initReading(body);
     } catch {
       status.textContent = '暂时无法读取文章，请刷新后重试。';
     }
@@ -284,7 +437,7 @@
     const editor = byId('edit-post');
     const photoInput = byId('post-photo');
     const textArea = postForm.elements.body;
-    const postFields = ['title', 'summary', 'body'];
+    const postFields = ['title', 'summary', 'body', 'tags'];
     const staged = new Map();
     const drafts = new Map();
     let activeSlug = '';
@@ -360,7 +513,11 @@
       }
       if (activeSlug && draft?.sourceVersion !== (selected?.updatedAt || selected?.date)) draft = null;
       const value = draft || staged.get(activeSlug)?.post || selected || {};
-      for (const name of postFields) postForm.elements[name].value = typeof value[name] === 'string' ? value[name] : '';
+      for (const name of postFields) {
+        const field = value[name];
+        postForm.elements[name].value = name === 'tags' && Array.isArray(field) ? field.join('，')
+          : typeof field === 'string' ? field : '';
+      }
       photos = validPhotos(value.photos) ? value.photos || [] : [];
       byId('post-preview').hidden = true;
       photoInput.value = '';
@@ -452,7 +609,12 @@
         return;
       }
       const timestamp = new Date().toISOString();
-      const item = { ...original, ...post, slug, date: source?.date || timestamp, updatedAt: timestamp, photos: images };
+      const tags = parseTags(post.tags);
+      if (!validTags(tags)) {
+        report('最多可填写 6 个标签，每个标签最多 24 个字。', true);
+        return;
+      }
+      const item = { ...original, ...post, tags, slug, date: source?.date || timestamp, updatedAt: timestamp, photos: images };
       staged.set(slug, { post: item, original, editing: Boolean(source) });
       invalidateOutput();
       update();
@@ -557,6 +719,7 @@
     }).catch(() => report('暂时无法读取已发布内容。请刷新后重试，避免覆盖线上文章。', true));
   }
 
+  initTheme();
   const page = document.body.dataset.page;
   if (page === 'home') initHome();
   if (page === 'article') initArticle();

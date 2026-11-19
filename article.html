@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>文章 · Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css?v=photos-1">
-  <script defer src="/journal.js?v=photos-1"></script>
+  <link rel="stylesheet" href="/journal.css?v=reading-1">
+  <script defer src="/journal.js?v=reading-1"></script>
 </head>
 <body data-page="article">
   <header class="bar"><div class="shell bar-inner">
     <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">C</span> Chen’s Journal</a>
-    <nav aria-label="主导航"><a href="/#posts">全部文章</a></nav>
+    <nav aria-label="主导航"><a href="/#posts">全部文章</a><button type="button" class="theme-button" data-theme-toggle aria-label="深色模式" aria-pressed="false" title="切换深色模式" hidden><span aria-hidden="true">◐</span></button></nav>
   </div></header>
+  <progress id="reading-progress" class="reading-progress" max="100" value="0" aria-label="阅读进度" hidden></progress>
   <main class="shell reader">
     <a class="text-link" href="/#posts">← 返回文章列表</a>
     <p id="article-status" class="muted" role="status">正在读取文章…</p>
@@ -21,9 +22,15 @@
       <h1 id="article-title"></h1>
       <div class="byline"><img class="avatar" data-avatar src="/images/avatar.jpg" width="38" height="38" alt=""><span>Chen Zhuo</span><time id="article-date"></time></div>
       <p id="article-summary"></p>
+      <div id="article-tags" class="tag-list" hidden></div>
+      <details id="article-toc" class="article-toc" open hidden><summary>目录</summary><nav id="toc-links" aria-label="文章目录"></nav></details>
       <div id="article-body" class="prose"></div>
     </article>
   </main>
+  <dialog id="photo-dialog" class="photo-dialog" aria-label="照片预览">
+    <button id="close-photo" type="button" class="button">关闭 <span aria-hidden="true">×</span></button>
+    <img id="zoomed-photo" alt="">
+  </dialog>
   <footer class="shell footer"><span>Chen’s Journal</span><a href="/#posts">全部文章</a></footer>
 </body>
 </html>
