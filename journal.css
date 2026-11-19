@@ -373,3 +373,95 @@ button.tag:hover, a.tag:hover { border-color: var(--accent); }
 @media (prefers-reduced-motion: no-preference) {
   .add-post, .hero-link { transition: background-color 160ms ease; }
 }
+
+/* Decorative star field belongs only to the homepage masthead. */
+.star-sky {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, #000 4%, #000e 64%, transparent 100%);
+}
+.star-sky::before, .star-sky::after {
+  position: absolute;
+  inset: -24px -36px;
+  content: '';
+}
+.star-sky::before {
+  background-image:
+    radial-gradient(circle at 231px 7px, #a9d6ffa8 0.6px, transparent 1.2px),
+    radial-gradient(circle at 352px 81px, #d9ebff82 0.5px, transparent 1.1px),
+    radial-gradient(circle at 172px 139px, #e2eeffb0 0.5px, transparent 1.1px),
+    radial-gradient(circle at 186px 168px, #e2eeffb0 0.5px, transparent 1.1px),
+    radial-gradient(circle at 351px 169px, #d9ebff82 0.7px, transparent 1.3px),
+    radial-gradient(circle at 322px 198px, #e2eeffb0 0.6px, transparent 1.2px),
+    radial-gradient(circle at 246px 166px, #a9d6ffa8 0.7px, transparent 1.3px),
+    radial-gradient(circle at 283px 30px, #e2eeffb0 0.6px, transparent 1.2px),
+    radial-gradient(circle at 259px 41px, #d9ebff82 0.5px, transparent 1.1px),
+    radial-gradient(circle at 223px 160px, #a9d6ffa8 0.8px, transparent 1.4px),
+    radial-gradient(circle at 132px 164px, #a9d6ffa8 0.6px, transparent 1.2px),
+    radial-gradient(circle at 82px 71px, #e2eeffb0 0.7px, transparent 1.3px),
+    radial-gradient(circle at 228px 223px, #d9ebff82 0.7px, transparent 1.3px),
+    radial-gradient(circle at 186px 12px, #a9d6ffa8 0.6px, transparent 1.2px),
+    radial-gradient(circle at 98px 119px, #d9ebff82 0.7px, transparent 1.3px),
+    radial-gradient(circle at 203px 85px, #d9ebff82 0.7px, transparent 1.3px),
+    radial-gradient(circle at 113px 29px, #a9d6ffa8 0.7px, transparent 1.3px),
+    radial-gradient(circle at 162px 58px, #d9ebff82 0.5px, transparent 1.1px),
+    radial-gradient(circle at 383px 133px, #a9d6ffa8 0.7px, transparent 1.3px),
+    radial-gradient(circle at 22px 222px, #d9ebff82 0.6px, transparent 1.2px),
+    radial-gradient(circle at 280px 68px, #a9d6ffa8 0.5px, transparent 1.1px),
+    radial-gradient(circle at 137px 214px, #d9ebff82 0.8px, transparent 1.4px),
+    radial-gradient(circle at 372px 168px, #e2eeffb0 0.6px, transparent 1.2px),
+    radial-gradient(circle at 381px 217px, #e2eeffb0 0.5px, transparent 1.1px);
+  background-size: 384px 224px;
+  opacity: .65;
+}
+.star-sky::after {
+  background-image:
+    radial-gradient(circle at 457px 190px, #f3fbfff2 1.2px, transparent 1.8px),
+    radial-gradient(circle at 53px 170px, #f3fbfff2 1.0px, transparent 1.6px),
+    radial-gradient(circle at 251px 30px, #f3fbfff2 0.7px, transparent 1.3px),
+    radial-gradient(circle at 252px 237px, #fff4d8e6 1.0px, transparent 1.6px),
+    radial-gradient(circle at 97px 199px, #fff4d8e6 1.2px, transparent 1.8px),
+    radial-gradient(circle at 342px 216px, #f3fbfff2 1.1px, transparent 1.7px),
+    radial-gradient(circle at 426px 171px, #fff4d8e6 0.7px, transparent 1.3px),
+    radial-gradient(circle at 21px 69px, #f3fbfff2 1.0px, transparent 1.6px),
+    radial-gradient(circle at 291px 31px, #f3fbfff2 1.0px, transparent 1.6px),
+    radial-gradient(circle at 47px 297px, #fff4d8e6 1.2px, transparent 1.8px),
+    radial-gradient(circle at 282px 172px, #b3dcffdb 1.2px, transparent 1.8px),
+    radial-gradient(circle at 414px 195px, #b3dcffdb 1.0px, transparent 1.6px),
+    radial-gradient(circle at 67px 253px, #fff4d8e6 1.2px, transparent 1.8px);
+  background-size: 612px 312px;
+  opacity: .82;
+}
+.shooting-star {
+  position: absolute;
+  top: 22%;
+  right: 23%;
+  width: clamp(66px, 12vw, 160px);
+  height: 2px;
+  border-radius: 100%;
+  background: linear-gradient(90deg, #fff 0%, #b9dfffbd 15%, #89bbff30 68%, transparent);
+  opacity: 0;
+}
+.shooting-star + .shooting-star { top: 11%; right: 51%; width: clamp(54px, 9vw, 116px); }
+@media (prefers-reduced-motion: no-preference) {
+  .star-sky::before { animation: star-drift 24s ease-in-out infinite alternate; }
+  .star-sky::after { animation: star-shimmer 7s ease-in-out infinite alternate; }
+  .shooting-star { animation: star-streak 14s .9s linear infinite; }
+  .shooting-star + .shooting-star { animation-duration: 23s; animation-delay: 5.2s; }
+  @keyframes star-drift {
+    from { transform: translate3d(0, 0, 0); opacity: .56; }
+    to { transform: translate3d(-21px, 16px, 0); opacity: .82; }
+  }
+  @keyframes star-shimmer {
+    from { transform: translate3d(0, 0, 0); opacity: .52; }
+    to { transform: translate3d(-8px, 5px, 0); opacity: .97; }
+  }
+  @keyframes star-streak {
+    0% { transform: translate3d(45px, -23px, 0) rotate(-27deg); opacity: 0; }
+    2% { opacity: .96; }
+    10%, 100% { transform: translate3d(-200px, 102px, 0) rotate(-27deg); opacity: 0; }
+  }
+}
