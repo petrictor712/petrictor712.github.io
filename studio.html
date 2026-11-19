@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex">
   <title>博主管理 · Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css?v=reading-1">
-  <script defer src="/journal.js?v=reading-1"></script>
+  <link rel="stylesheet" href="/journal.css?v=layout-1">
+  <script defer src="/journal.js?v=layout-1"></script>
 </head>
 <body data-page="studio">
   <header class="bar"><div class="shell bar-inner">
@@ -22,8 +22,8 @@
     <noscript><p class="notice">管理功能需要开启 JavaScript。</p></noscript>
     <p id="studio-status" class="notice" role="status">正在读取已发布内容…</p>
     <div class="studio-grid">
-      <section class="panel" aria-labelledby="write-title">
-        <h2 id="write-title">文章编辑器</h2>
+      <section id="article-editor" class="panel" aria-labelledby="write-title">
+        <div class="editor-heading"><h2 id="write-title">文章编辑器</h2><a id="view-current-article" class="text-link" hidden>查看原文 ↗</a></div>
         <label class="article-picker">选择要编辑的文章<select id="edit-post" disabled><option value="">＋ 写新文章</option></select></label>
         <form id="post-form">
           <label>文章标题<input name="title" maxlength="100" placeholder="输入标题" required></label>

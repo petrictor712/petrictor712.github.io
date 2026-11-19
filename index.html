@@ -6,8 +6,8 @@
   <meta name="description" content="Chen 的个人博客与文章归档。">
   <title>Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css?v=reading-1">
-  <script defer src="/journal.js?v=reading-1"></script>
+  <link rel="stylesheet" href="/journal.css?v=layout-1">
+  <script defer src="/journal.js?v=layout-1"></script>
 </head>
 <body data-page="home">
   <a class="skip" href="#posts">跳到文章</a>
@@ -17,18 +17,31 @@
   </div></header>
   <main>
     <section class="hero shell" aria-labelledby="page-title">
-      <div class="hero-copy">
-        <img class="avatar" data-avatar src="/images/avatar.jpg" width="56" height="56" alt="Chen 的头像">
-        <p class="eyebrow">CHEN ZHUO</p>
-        <h1 id="page-title">Chen’s <br>Journal<span>.</span></h1>
-        <p class="intro">个人博客 · 文章与随笔</p>
-        <a class="button primary" href="#posts">浏览文章 <span aria-hidden="true">↓</span></a>
-      </div>
       <img class="hero-art" src="/images/blog-hero.webp" alt="" fetchpriority="high" decoding="async">
+      <div class="hero-copy">
+        <div class="hero-profile">
+          <img class="avatar" data-avatar src="/images/avatar.jpg" width="44" height="44" alt="Chen 的头像">
+          <span>个人博客</span>
+        </div>
+        <h1 id="page-title">Chen’s Journal<span>.</span></h1>
+        <p class="intro">文章与随笔</p>
+        <a class="hero-link" href="#posts">浏览文章 <span aria-hidden="true">↓</span></a>
+      </div>
+      <div id="journal-clock" class="journal-clock" hidden>
+        <span class="clock-label">北京时间</span>
+        <time id="clock-time"></time>
+        <span id="clock-date" class="clock-date"></span>
+      </div>
     </section>
     <section id="posts" class="shell post-section" aria-labelledby="posts-title">
       <div class="section-head">
-        <div><h2 id="posts-title">文章</h2><p id="result-count" aria-live="polite">3 篇文章</p></div>
+        <div class="post-heading">
+          <div class="post-heading-line">
+            <h2 id="posts-title">文章</h2>
+            <a class="add-post" href="/studio.html#article-editor" aria-label="添加新文章" title="添加新文章"><span aria-hidden="true">+</span></a>
+          </div>
+          <p id="result-count" aria-live="polite">3 篇文章</p>
+        </div>
         <div class="post-controls">
           <label class="search"><span>搜索文章</span><input id="search" type="search" placeholder="输入标题、正文或标签" autocomplete="off"></label>
           <label id="order-control" hidden><span>排序</span><select id="post-order"><option value="newest">最新优先</option><option value="oldest">最早优先</option></select></label>
@@ -36,9 +49,9 @@
       </div>
       <div id="post-tags" class="tag-filter" role="group" aria-label="按标签筛选文章" hidden></div>
       <div id="post-grid" class="post-grid">
-        <article class="card"><a href="/2024/05/10/my-test-draft/"><img src="/images/blog-draft.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>my-test-draft</h3><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>
-        <article class="card"><a href="/2024/05/10/mt-tset-post/"><img src="/images/blog-test.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>mt-tset-post</h3><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>
-        <article class="card"><a href="/2024/05/10/hello-world/"><img src="/images/blog-hello.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>Hello World</h3><p>Hexo 入门示例，包含写作、预览和部署命令。</p><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>
+        <article class="card has-cover"><a href="/2024/05/10/my-test-draft/"><img src="/images/blog-draft.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>my-test-draft</h3><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>
+        <article class="card has-cover"><a href="/2024/05/10/mt-tset-post/"><img src="/images/blog-test.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>mt-tset-post</h3><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>
+        <article class="card has-cover"><a href="/2024/05/10/hello-world/"><img src="/images/blog-hello.webp" alt="" loading="lazy"><div class="card-body"><time datetime="2024-05-10">2024 年 5 月 10 日</time><h3>Hello World</h3><p>Hexo 入门示例，包含写作、预览和部署命令。</p><span class="card-arrow" aria-hidden="true">↗</span></div></a></article>
       </div>
       <p id="feed-status" class="muted" role="status"></p>
     </section>

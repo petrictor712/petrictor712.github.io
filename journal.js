@@ -25,6 +25,32 @@
     return node;
   }
 
+  function initClock() {
+    const clock = byId('journal-clock');
+    const time = byId('clock-time');
+    const date = byId('clock-date');
+    const timezone = { timeZone: 'Asia/Shanghai' };
+    const formatTime = new Intl.DateTimeFormat('zh-CN', {
+      ...timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+    });
+    const formatDate = new Intl.DateTimeFormat('zh-CN', { ...timezone, month: 'long', day: 'numeric', weekday: 'long' });
+    let timer;
+    const tick = () => {
+      const now = new Date();
+      time.dateTime = now.toISOString();
+      time.textContent = formatTime.format(now);
+      date.textContent = formatDate.format(now);
+      timer = setTimeout(tick, 1000 - now.getTime() % 1000);
+    };
+    const sync = () => {
+      clearTimeout(timer);
+      if (!document.hidden) tick();
+    };
+    document.addEventListener('visibilitychange', sync);
+    sync();
+    clock.hidden = false;
+  }
+
   function initTheme() {
     const toggle = document.querySelector('[data-theme-toggle]');
     if (!toggle) return;
@@ -217,27 +243,44 @@
     container.hidden = !tags.length;
   }
 
+  function articleUrl(post) {
+    return post.url || '/article.html?p=' + encodeURIComponent(post.slug);
+  }
+
+  function postExcerpt(post) {
+    if (post.summary) return post.summary;
+    const paragraph = post.body?.split(/\r?\n/).map((line) => line.trim())
+      .find((line) => line && !/^(?:#|`|!\[)/.test(line));
+    if (!paragraph) return '';
+    const text = paragraph.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[*_`]+/g, '');
+    const chars = Array.from(text);
+    return chars.length > 78 ? chars.slice(0, 78).join('') + '…' : text;
+  }
+
   function renderCard(post) {
     const card = element('article', undefined, 'card');
     const link = element('a');
-    link.href = post.url || '/article.html?p=' + encodeURIComponent(post.slug);
+    link.href = articleUrl(post);
     const body = element('div', undefined, 'card-body');
     const arrow = element('span', '↗', 'card-arrow');
     arrow.setAttribute('aria-hidden', 'true');
     body.append(timeLabel(post.date), element('h3', post.title), arrow);
-    if (post.summary) body.append(element('p', post.summary));
+    const excerpt = postExcerpt(post);
+    if (excerpt) body.append(element('p', excerpt));
     if (post.tags?.length) {
       const tags = element('div', undefined, 'tag-list');
       renderTags(tags, post.tags);
       body.append(tags);
     }
-    if (post.cover) {
+    const cover = post.cover || post.photos?.[0]?.src;
+    if (cover) {
       const image = element('img');
-      image.src = post.cover;
+      image.src = cover;
       image.alt = '';
       image.loading = 'lazy';
       image.decoding = 'async';
       link.append(image);
+      card.classList.add('has-cover');
     }
     link.append(body);
     card.append(link);
@@ -380,6 +423,9 @@
         return;
       }
       document.title = post.title + ' · Chen’s Journal';
+      const editLink = byId('edit-current-article');
+      editLink.href = '/studio.html?edit=' + encodeURIComponent(post.slug) + '#article-editor';
+      editLink.hidden = false;
       byId('article-title').textContent = post.title;
       byId('article-date').replaceWith(timeLabel(post.date));
       byId('article-summary').textContent = post.summary;
@@ -435,6 +481,8 @@
     const avatarSubmit = avatarForm.querySelector('[type="submit"]');
     const postSubmit = postForm.querySelector('[type="submit"]');
     const editor = byId('edit-post');
+    const viewArticle = byId('view-current-article');
+    const requestedPost = new URLSearchParams(location.search).get('edit');
     const photoInput = byId('post-photo');
     const textArea = postForm.elements.body;
     const postFields = ['title', 'summary', 'body', 'tags'];
@@ -507,6 +555,9 @@
     const openDraft = () => {
       ++editRevision;
       const selected = selectedPost();
+      viewArticle.hidden = !selected;
+      if (selected) viewArticle.href = articleUrl(selected);
+      else viewArticle.removeAttribute('href');
       let draft = drafts.get(activeSlug);
       if (!draft) {
         try { draft = JSON.parse(localStorage.getItem(draftStorageKey()) || 'null'); } catch { /* Storage is optional. */ }
@@ -529,6 +580,10 @@
       if (!base) return;
       saveDraft();
       activeSlug = editor.value;
+      const url = new URL(location.href);
+      if (activeSlug) url.searchParams.set('edit', activeSlug);
+      else url.searchParams.delete('edit');
+      history.replaceState(null, '', url);
       openDraft();
     });
     postForm.addEventListener('input', (event) => {
@@ -713,15 +768,24 @@
         option.value = post.slug;
         editor.append(option);
       }
+      const known = allPosts(data).some((post) => post.slug === requestedPost);
+      if (known) {
+        activeSlug = requestedPost;
+        editor.value = requestedPost;
+      }
       openDraft();
-      report('当前内容已就绪。草稿保存在此浏览器，提交到 GitHub 后才会公开。');
+      report(requestedPost && !known ? '找不到要编辑的文章，可以选择其他文章继续。'
+        : '当前内容已就绪。草稿保存在此浏览器，提交到 GitHub 后才会公开。', Boolean(requestedPost && !known));
       update();
     }).catch(() => report('暂时无法读取已发布内容。请刷新后重试，避免覆盖线上文章。', true));
   }
 
   initTheme();
   const page = document.body.dataset.page;
-  if (page === 'home') initHome();
+  if (page === 'home') {
+    initClock();
+    initHome();
+  }
   if (page === 'article') initArticle();
   if (page === 'studio') initStudio();
 })();

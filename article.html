@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>文章 · Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css?v=reading-1">
-  <script defer src="/journal.js?v=reading-1"></script>
+  <link rel="stylesheet" href="/journal.css?v=layout-1">
+  <script defer src="/journal.js?v=layout-1"></script>
 </head>
 <body data-page="article">
   <header class="bar"><div class="shell bar-inner">
@@ -15,7 +15,10 @@
   </div></header>
   <progress id="reading-progress" class="reading-progress" max="100" value="0" aria-label="阅读进度" hidden></progress>
   <main class="shell reader">
-    <a class="text-link" href="/#posts">← 返回文章列表</a>
+    <div class="reader-toolbar">
+      <a class="text-link" href="/#posts">← 返回文章列表</a>
+      <a id="edit-current-article" class="button small" hidden>编辑本文</a>
+    </div>
     <p id="article-status" class="muted" role="status">正在读取文章…</p>
     <noscript><p>阅读这篇文章需要开启 JavaScript。</p></noscript>
     <article id="article" hidden>
