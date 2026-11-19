@@ -4,13 +4,18 @@ var e={version:"0.2.5",hostname:"https://westwind.github.io",root:"/",statics:"/
 
 // Use the published journal avatar on the older Hexo pages as well.
 (() => {
-  const avatar = fetch('/blog-content.json', { cache: 'no-cache' })
+  const content = fetch('/blog-content.json', { cache: 'no-cache' })
     .then((response) => response.ok ? response.json() : null)
-    .then((data) => data?.avatar)
     .catch(() => null);
 
   async function updateAvatar() {
-    const source = await avatar;
+    const data = await content;
+    const legacySlug = /^\/2024\/05\/10\/(hello-world|mt-tset-post|my-test-draft)\/(?:index\.html)?$/.exec(location.pathname);
+    if (legacySlug && data?.posts?.some((post) => post.slug === 'legacy-' + legacySlug[1])) {
+      location.replace('/article.html?p=legacy-' + legacySlug[1]);
+      return;
+    }
+    const source = data?.avatar;
     if (typeof source !== 'string' || source.length >= 180000
         || !/^data:image\/(?:webp|jpeg|png);base64,[a-z0-9+/=]+$/i.test(source)) return;
     document.querySelectorAll('img[itemprop="image"]').forEach((image) => {
