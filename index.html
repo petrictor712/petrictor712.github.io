@@ -6,8 +6,8 @@
   <meta name="description" content="Chen 的个人博客与文章归档。">
   <title>Chen’s Journal</title>
   <link rel="icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="/journal.css?v=full-stars-art-1">
-  <script defer src="/journal.js?v=layout-1"></script>
+  <link rel="stylesheet" href="/journal.css?v=editorial-1">
+  <script defer src="/journal.js?v=editorial-1"></script>
 </head>
 <body data-page="home">
   <div class="star-sky" aria-hidden="true">
@@ -20,22 +20,31 @@
     <nav aria-label="主导航"><a href="#posts">文章</a><a href="/archives/">旧文归档</a><a class="button small" href="/studio.html">博主管理</a><button type="button" class="theme-button" data-theme-toggle aria-label="深色模式" aria-pressed="false" title="切换深色模式" hidden><span aria-hidden="true">◐</span></button></nav>
   </div></header>
   <main>
-    <section class="hero shell" aria-labelledby="page-title">
+    <section class="hero shell editorial-hero" aria-labelledby="page-title">
       <div class="hero-copy">
         <div class="hero-profile">
           <img class="avatar" data-avatar src="/images/avatar.jpg" width="44" height="44" alt="Chen 的头像">
-          <span>个人博客</span>
+          <span>Chen Zhuo · 个人博客</span>
         </div>
-        <h1 id="page-title">Chen’s Journal<span>.</span></h1>
-        <p class="intro">文章与随笔</p>
+        <h1 id="page-title">Chen’s <br>Journal<span>.</span></h1>
+        <p class="intro">记录日常随笔，也整理写作与博客笔记。</p>
         <a class="hero-link" href="#posts">浏览文章 <span aria-hidden="true">↓</span></a>
+        <a id="latest-post" class="latest-post" hidden>
+          <span class="latest-label">最新文章</span><strong id="latest-title"></strong><span aria-hidden="true">↗</span>
+        </a>
       </div>
-      <img class="home-illustration" src="/images/frieren-clocktower.webp" alt="夕阳下的钟楼前，欣梅尔单膝跪地，为芙莉莲戴上戒指" fetchpriority="high" decoding="async">
-      <div id="journal-clock" class="journal-clock" hidden>
-        <span class="clock-label">北京时间</span>
-        <time id="clock-time"></time>
-        <span id="clock-date" class="clock-date"></span>
-      </div>
+      <figure class="editorial-art">
+        <img class="home-illustration" src="/images/frieren-clocktower.webp" width="1274" height="657"
+          alt="夕阳下的钟楼前，欣梅尔单膝跪地，为芙莉莲戴上戒指" fetchpriority="high" decoding="async">
+        <figcaption>
+          <a href="https://forum.gamer.com.tw/C.php?bsn=70547&amp;snA=675" rel="noopener noreferrer" target="_blank">《葬送的芙莉莲》· 第 14 集 ↗</a>
+          <div id="journal-clock" class="journal-clock" hidden>
+            <span class="clock-label">北京时间</span>
+            <time id="clock-time"></time>
+            <span id="clock-date" class="clock-date"></span>
+          </div>
+        </figcaption>
+      </figure>
     </section>
     <section id="posts" class="shell post-section" aria-labelledby="posts-title">
       <div class="section-head">

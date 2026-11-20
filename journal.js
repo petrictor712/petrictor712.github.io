@@ -321,6 +321,12 @@
     } catch {
       byId('feed-status').textContent = '暂时无法刷新新文章，已显示归档中的文章。';
     }
+    const latest = byId('latest-post');
+    if (latest && posts.length) {
+      latest.href = articleUrl(posts[0]);
+      byId('latest-title').textContent = posts[0].title;
+      latest.hidden = false;
+    }
     const tags = new Map();
     for (const post of posts) {
       for (const tag of post.tags || []) tags.set(tag.toLocaleLowerCase(), tag);
